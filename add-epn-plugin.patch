@@ -6,7 +6,7 @@ index 5f196cc8c..50b42d8b0 100644
  add_subdirectory(wallet_api_plugin)
  add_subdirectory(txn_test_gen_plugin)
  add_subdirectory(db_size_api_plugin)
-+add_subdirectory(epn-plugin)
++add_subdirectory(epn_plugin)
  #add_subdirectory(faucet_testnet_plugin)
  add_subdirectory(mongo_db_plugin)
  add_subdirectory(login_plugin)
@@ -18,7 +18,7 @@ index 935f45939..f3de5f7bb 100644
          PRIVATE -Wl,${whole_archive_flag} txn_test_gen_plugin        -Wl,${no_whole_archive_flag}
          PRIVATE -Wl,${whole_archive_flag} db_size_api_plugin         -Wl,${no_whole_archive_flag}
          PRIVATE -Wl,${whole_archive_flag} producer_api_plugin        -Wl,${no_whole_archive_flag}
-+        PRIVATE -Wl,${whole_archive_flag} epn-plugin                 -Wl,${no_whole_archive_flag}
++        PRIVATE -Wl,${whole_archive_flag} epn_plugin                 -Wl,${no_whole_archive_flag}
          PRIVATE -Wl,${whole_archive_flag} test_control_plugin        -Wl,${no_whole_archive_flag}
          PRIVATE -Wl,${whole_archive_flag} test_control_api_plugin    -Wl,${no_whole_archive_flag}
          PRIVATE -Wl,${build_id_flag}
