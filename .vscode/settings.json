@@ -103,7 +103,7 @@
         "filesystem": "cpp",
         "__functional_base_03": "cpp"
     },
-    "clang-tidy.buildPath": "build",
+    "clang-tidy.buildPath": "${workspaceFolder}/../../build",
     "clang-tidy.compilerArgsBefore": [
         "-Wall",
         "-Wextra"
