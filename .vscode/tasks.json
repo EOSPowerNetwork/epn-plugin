@@ -18,17 +18,17 @@
             }
         },
         {
-            "label": "make",
+            "label": "make & install",
             "type": "shell",
-            "command": "cd ../../build && make -j $(nproc)",
+            "command": "cd ../../build && make -j $(nproc) && make install",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "options": {
                 "statusbar": {
-                    "label": "$(diff-insert) Make",
-                    "tooltip": "Does a make only"
+                    "label": "$(diff-insert) Make & Install",
+                    "tooltip": "Does a make and make install"
                 }
             }
         },
