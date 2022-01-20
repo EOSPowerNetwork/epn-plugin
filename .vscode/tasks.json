@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // Compilation
+        {
+            "label": "cmake & make",
+            "type": "shell",
+            "command": "cd ../../build && cmake -DCMAKE_BUILD_TYPE=Release -DDISABLE_WASM_SPEC_TESTS=yes .. && make -j $(nproc)",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "statusbar": {
+                    "label": "$(diff-insert) Cmake & make",
+                    "tooltip": "Does cmake and make"
+                }
+            }
+        },
+        {
+            "label": "make",
+            "type": "shell",
+            "command": "cd ../../build && make -j $(nproc)",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "statusbar": {
+                    "label": "$(diff-insert) Make",
+                    "tooltip": "Does a make only"
+                }
+            }
+        },
+        {
+            "label": "install",
+            "type": "shell",
+            "command": "cd ../../build && make install",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "statusbar": {
+                    "label": "$(diff-insert) Install",
+                    "tooltip": "Does a make install"
+                }
+            }
+        },
+    ]
+}
