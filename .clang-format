@@ -1,0 +1,24 @@
+---
+BasedOnStyle: Chromium
+ColumnLimit: '180'
+IndentWidth: '4'
+NamespaceIndentation: All
+ReflowComments: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse      
+BreakConstructorInitializers: 'BeforeComma'
+BreakBeforeBinaryOperators: All
+BreakBeforeTernaryOperators: true
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: false
+  AfterStruct: false
+  AfterClass: false
+  AfterFunction: false
+  AfterNamespace: true
+  AfterCaseLabel: true
+  AfterExternBlock: true
+  BeforeElse: true
+  SplitEmptyFunction: false
