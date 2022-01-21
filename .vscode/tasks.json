@@ -33,16 +33,16 @@
             }
         },
         {
-            "label": "install & test",
+            "label": "make & install & test",
             "type": "shell",
-            "command": "cd ../../build && make install && cd /root/system-epn/build && cltester -v artifacts/test-system_epn.wasm [Nodeos] -s ",
+            "command": "cd ../../build && make -j $(nproc) && make install && cd /root/system-epn/build && cltester -v artifacts/test-system_epn.wasm [Nodeos] -s ",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "options": {
                 "statusbar": {
-                    "label": "$(diff-insert) Install & test",
+                    "label": "$(diff-insert) Make & install & test",
                     "tooltip": "Installs new nodeos and runs the test nodeos test suite"
                 }
             }
