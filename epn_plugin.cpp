@@ -43,7 +43,7 @@ namespace eosio
     void epn_plugin::set_program_options(options_description&, options_description& cfg) {
         // clang-format off
         cfg.add_options()
-            ("max-actions-per-block", bpo::value<int>()->default_value(2), "Max number of EPN actions executed per block")
+            ("max-actions-per-block", bpo::value<uint8_t>()->default_value(2), "Max number of EPN actions executed per block")
             ("signing-private-key", bpo::value<string>()->default_value("PRIVATE_KEY")->required(), "Singing private key")
             ("permission", bpo::value<string>()->default_value("active"), "The permission used to sign the EPN transactions")
             ("operator-name", bpo::value<string>()->required(), "Name of the operator executing EPN actions")
@@ -53,19 +53,33 @@ namespace eosio
 
     void epn_plugin::plugin_initialize(const variables_map& options) {
         try {
-            if (options.count("max-actions-per-block")) {
-                my->setMaxActionsPerBlock(options.at("heartbeat-period").as<uint8_t>());
-            }
-            if (options.count("signing-private-key")) {
-                auto privKey = options.at("signing-private-key").as<std::string>();
-                my->setSigningPrivateKey(fc::crypto::private_key(privKey));
-            }
-            if (options.count("permission")) {
-                my->setPermission(options.at("permission").as<std::string>());
-            }
-            if (options.count("operator-name")) {
-                my->setOperatorName(options.at("operator-name").as<std::string>());
-            }
+            auto handleOption = [&](const std::string& teststring, auto func) {
+                if (options.count(teststring)) {
+                    func(options.at(teststring));
+                }
+            };
+
+            // clang-format off
+            handleOption("max-actions-per-block", [&](const boost::program_options::variable_value& value) {
+                ilog("Converting max actions per block");
+                my->setMaxActionsPerBlock(value.as<uint8_t>()); 
+            });
+
+            handleOption("signing-private-key", [&](const boost::program_options::variable_value& value) {
+                ilog("Converting signing private key");
+                my->setSigningPrivateKey(fc::crypto::private_key(value.as<std::string>()));
+            });
+
+            handleOption("permission", [&](const boost::program_options::variable_value& value) {
+                ilog("Converting permission");
+                my->setPermission(value.as<std::string>());
+            });
+
+            handleOption("operator-name", [&](const boost::program_options::variable_value& value) {
+                ilog("Converting operator name");
+                my->setOperatorName(value.as<std::string>()); 
+            });
+            // clang-format on
         }
         FC_LOG_AND_RETHROW()
     }
