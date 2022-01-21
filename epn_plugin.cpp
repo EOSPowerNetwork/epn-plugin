@@ -8,7 +8,7 @@ namespace eosio
 
     class epn_plugin_impl {
        public:
-        void setMaxActionsPerBlock(const uint8_t numActionsPerBlock) {
+        void setMaxActionsPerBlock(const uint64_t numActionsPerBlock) {
             _actionsPerBlock = numActionsPerBlock;
         }
         void setSigningPrivateKey(const fc::crypto::private_key& privKey) {
@@ -30,7 +30,7 @@ namespace eosio
         fc::optional<boost::signals2::scoped_connection> _connection;
 
        private:
-        uint8_t _actionsPerBlock = 0;
+        uint64_t _actionsPerBlock = 0;
         fc::crypto::private_key _privateKey;
         std::string _permission;
         std::string _operatorName;
@@ -43,7 +43,7 @@ namespace eosio
     void epn_plugin::set_program_options(options_description&, options_description& cfg) {
         // clang-format off
         cfg.add_options()
-            ("max-actions-per-block", bpo::value<uint8_t>()->default_value(2), "Max number of EPN actions executed per block")
+            ("max-actions-per-block", bpo::value<uint64_t>()->default_value(2), "Max number of EPN actions executed per block")
             ("signing-private-key", bpo::value<string>()->default_value("PRIVATE_KEY")->required(), "Singing private key")
             ("permission", bpo::value<string>()->default_value("active"), "The permission used to sign the EPN transactions")
             ("operator-name", bpo::value<string>()->required(), "Name of the operator executing EPN actions")
@@ -62,7 +62,7 @@ namespace eosio
             // clang-format off
             handleOption("max-actions-per-block", [&](const boost::program_options::variable_value& value) {
                 ilog("Converting max actions per block");
-                my->setMaxActionsPerBlock(value.as<uint8_t>()); 
+                my->setMaxActionsPerBlock(value.as<uint64_t>()); 
             });
 
             handleOption("signing-private-key", [&](const boost::program_options::variable_value& value) {
@@ -89,16 +89,17 @@ namespace eosio
             auto& chain = app().find_plugin<chain_plugin>()->chain();
 
             my->_connection.emplace(chain.block_start.connect([&](const uint32_t& block_num) { my->on_block_start(block_num); }));
+
             /*
-             signal<void(uint32_t)>                        block_start; //
-       block_num signal<void(const signed_block_ptr&)> pre_accepted_block;
-             signal<void(const block_state_ptr&)> accepted_block_header;
-             signal<void(const block_state_ptr&)>          accepted_block;
-             signal<void(const block_state_ptr&)>          irreversible_block;
-             signal<void(const transaction_metadata_ptr&)> accepted_transaction;
-             signal<void(std::tuple<const transaction_trace_ptr&, const
-       signed_transaction&>)> applied_transaction;
-    */
+                signal<void(uint32_t)>                        block_start; //
+                block_num signal<void(const signed_block_ptr&)> pre_accepted_block;
+                signal<void(const block_state_ptr&)> accepted_block_header;
+                signal<void(const block_state_ptr&)>          accepted_block;
+                signal<void(const block_state_ptr&)>          irreversible_block;
+                signal<void(const transaction_metadata_ptr&)> accepted_transaction;
+                signal<void(std::tuple<const transaction_trace_ptr&, const
+                signed_transaction&>)> applied_transaction;
+            */
         }
         FC_LOG_AND_DROP();
     }
