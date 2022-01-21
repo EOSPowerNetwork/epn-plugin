@@ -33,17 +33,17 @@
             }
         },
         {
-            "label": "install",
+            "label": "install & test",
             "type": "shell",
-            "command": "cd ../../build && make install",
+            "command": "cd ../../build && make install && cd /root/system-epn/build && cltester -v artifacts/test-system_epn.wasm [Nodeos] -s ",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "options": {
                 "statusbar": {
-                    "label": "$(diff-insert) Install",
-                    "tooltip": "Does a make install"
+                    "label": "$(diff-insert) Install & test",
+                    "tooltip": "Installs new nodeos and runs the test nodeos test suite"
                 }
             }
         },
