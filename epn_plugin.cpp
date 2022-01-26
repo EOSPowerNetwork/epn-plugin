@@ -1,10 +1,26 @@
+
+#include <eosio/chain/abi_serializer.hpp>
+#include <eosio/chain/action.hpp>
 #include <eosio/chain_plugin/chain_plugin.hpp>
 #include <eosio/epn_plugin/epn_plugin.hpp>
+#include <fc/io/json.hpp>
 #include <string>
 
 namespace eosio
 {
     static appbase::abstract_plugin& _epn_plugin = app().register_plugin<epn_plugin>();
+
+    namespace epn_helpers
+    {
+        bool _validateAccount(const eosio::chain::controller& cc, eosio::chain::name accName) {
+            auto* account_obj = cc.db().find<eosio::chain::account_object, eosio::chain::by_name>(accName);
+            if (account_obj == nullptr) {
+                elog("EPN transaction failed: Blockchain account ${accName} is missing.", ("accName", accName));
+                return false;
+            }
+            return true;
+        }
+    };  // namespace epn_helpers
 
     class epn_plugin_impl {
        public:
@@ -24,16 +40,41 @@ namespace eosio
         }
 
         void on_block_start(const uint32_t& block_num) {
-            ilog("EOS Power Network plugin:  on_block_start() begin, num actions per block: ${_actionsPerBlock}", ("_actionsPerBlock", std::to_string(_actionsPerBlock)));
+            for (uint64_t i = 0; i < _actionsPerBlock; ++i) {
+                _sendAction(i);
+            }
         }
 
         fc::optional<boost::signals2::scoped_connection> _connection;
 
        private:
+        void _sendAction(const uint64_t& actionNum);
+        bool _isValidAccount(eosio::chain::name);
+
         uint64_t _actionsPerBlock = 0;
         fc::crypto::private_key _privateKey;
         std::string _permission;
         std::string _operatorName;
+    };
+
+    void epn_plugin_impl::_sendAction(const uint64_t& actionNum) {
+        using eosio::chain::account_object;
+        using eosio::chain::action;
+        using eosio::chain::by_name;
+        using eosio::chain::mutable_variant_object;
+        using eosio::chain::name;
+        using eosio::chain::packed_transaction;
+        using eosio::chain::permission_level;
+        using eosio::chain::signed_transaction;
+        using eosio::chain::transaction_trace_ptr;
+
+        auto& chain = app().get_plugin<chain_plugin>();
+
+        controller& cc = chain.chain();
+        name execContract = N("exec.epn");
+        if (!epn_helpers::_validateAccount(cc, execContract)) {
+            return;
+        }
     };
 
     epn_plugin::epn_plugin()
