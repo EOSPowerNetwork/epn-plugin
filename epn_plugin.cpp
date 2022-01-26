@@ -90,6 +90,30 @@ namespace eosio
             return;
         }
         abi_def abi(*(abiResult.abi));
+
+        // Serialize action parameters
+        auto abi_serializer_max_time = chain.get_abi_serializer_max_time();
+        auto yieldFunction = abi_serializer::create_yield_function(abi_serializer_max_time);
+        abi_serializer serializer(abi, yieldFunction);
+        act.data = serializer.variant_to_binary("execute", mutable_variant_object()("actionNr", actionNum), yieldFunction);
+
+        // From
+        // act.data
+        //     = eosio_token_serializer.variant_to_binary("create", fc::json::from_string(fc::format_string("{\"issuer\":\"${issuer}\",\"maximum_supply\":\"1000000000.0000 CUR\"}}",
+        //                                                                                                  fc::mutable_variant_object()("issuer", newaccountT.to_string()))));
+
+        // Add the action to a signed transaction
+        signed_transaction trx;
+        trx.actions.push_back(act);
+        trx.expiration = cc.head_block_time() + fc::seconds(30);
+        trx.set_reference_block(cc.head_block_id());
+        trx.sign(_privateKey, chain.get_chain_id());
+
+        chain.accept_transaction(std::make_shared<packed_transaction>(trx), [=](const fc::static_variant<fc::exception_ptr, transaction_trace_ptr>& result) {
+            if (result.contains<fc::exception_ptr>()) {
+                elog("EPN transaction failed: ${err}", ("err", result.get<fc::exception_ptr>()->to_detail_string()));
+            }
+        });
     };
 
     epn_plugin::epn_plugin()
