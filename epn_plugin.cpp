@@ -71,10 +71,25 @@ namespace eosio
         auto& chain = app().get_plugin<chain_plugin>();
 
         controller& cc = chain.chain();
-        name execContract = N("exec.epn");
+        name execContract = N(exec.epn);
         if (!epn_helpers::_validateAccount(cc, execContract)) {
             return;
         }
+
+        // Create the action to send
+        action act;
+        act.account = execContract;
+        act.name = N(execute);
+        act.authorization = {{name{_operatorName}, name{_permission}}};
+
+        // Get abi
+        auto ro = chain.get_read_only_api();
+        auto abiResult = ro.get_abi({execContract});
+        if (!abiResult.abi.valid()) {
+            elog("EPN transaction failed, exec ABI doesn't exist.");
+            return;
+        }
+        abi_def abi(*(abiResult.abi));
     };
 
     epn_plugin::epn_plugin()
